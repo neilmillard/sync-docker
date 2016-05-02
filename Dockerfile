@@ -25,6 +25,9 @@ RUN tar -xzf /tmp/sync.tgz -C /usr/sbin btsync && rm -f /tmp/sync.tgz
 
 COPY btsync.conf /etc/
 COPY run_sync /opt/
+RUN mkdir -p /var/run/btsync && \
+	mkdir -p /mnt/sync/folders && \
+	mkdir -p /mnt/sync/config
 
 EXPOSE 8888
 EXPOSE 55555
