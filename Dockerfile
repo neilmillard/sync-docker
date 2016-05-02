@@ -2,12 +2,26 @@
 #
 # VERSION               0.1
 
-FROM ubuntu:15.04
-MAINTAINER Bertrand Chazot <bertrand@bittorrent.com>
+# AlpineLinux with glibc
+#  -  https://www.gnu.org/software/libc/
+#  -  https://github.com/andyshinn/alpine-pkg-glibc
+
+FROM alpine:latest
+MAINTAINER Neil Millard <neil@neilmillard.com>
+ENV GLIBC_VERSION 2.23-r1
+RUN apk add --update curl ca-certificates bash && \
+    curl -o /tmp/glibc.apk -L "https://github.com/andyshinn/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-${GLIBC_VERSION}.apk" && \
+    apk add --allow-untrusted /tmp/glibc.apk && \
+    curl -o /tmp/glibc-bin.apk -L "https://github.com/andyshinn/alpine-pkg-glibc/releases/download/${GLIBC_VERSION}/glibc-bin-${GLIBC_VERSION}.apk" && \
+    apk add --allow-untrusted /tmp/glibc-bin.apk && \
+    /usr/glibc-compat/sbin/ldconfig /lib /usr/glibc/usr/lib && \
+    rm -rf /tmp/* /var/cache/apk/* &&  \
+    echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf
+
 LABEL com.getsync.version="2.3.3"
 
 ADD https://download-cdn.getsync.com/2.3.3/linux-x64/BitTorrent-Sync_x64.tar.gz /tmp/sync.tgz
-RUN tar -xf /tmp/sync.tgz -C /usr/sbin btsync && rm -f /tmp/sync.tgz
+RUN tar -xzf /tmp/sync.tgz -C /usr/sbin btsync && rm -f /tmp/sync.tgz
 
 COPY btsync.conf /etc/
 COPY run_sync /opt/

@@ -11,7 +11,7 @@ Sync uses peer-to-peer technology to provide fast, private file sharing for team
     mkdir -p $DATA_FOLDER
 
     docker run -d --name Sync \
-      -p 127.0.0.1:$WEBUI_PORT:8888 -p 55555 \
+      -p 127.0.0.1:$WEBUI_PORT:8888 -p 55555 -p 55555/UDP \
       -v $DATA_FOLDER:/mnt/sync \
       --restart on-failure \
       bittorrent/sync
@@ -23,7 +23,7 @@ Go to localhost:$WEBUI_PORT in a web browser to access the webui.
 If you do not want to limit the access to the webui to localhost, run instead:
 
     docker run -d --name Sync \
-      -p $WEBUI_PORT:8888 -p 55555 \
+      -p $WEBUI_PORT:8888 -p 55555 -p 55555/UDP \
       -v $DATA_FOLDER:/mnt/sync \
       --restart on-failure \
       bittorrent/sync
